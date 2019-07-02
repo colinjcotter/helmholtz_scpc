@@ -40,15 +40,20 @@ U = Function(W)
 bcs = [DirichletBC(W.sub(1), 0., (1,2,3,4)),
        DirichletBC(W.sub(3), 0., (1,2,3,4))]
 
-HProblem = LinearVariationalProblem(a, L, U, bcs=bcs, aP=aP)
+HProblem = LinearVariationalProblem(a, L, U, bcs=bcs, aP=aP,
+                                    constant_jacobian=False)
 params = {'ksp_type':'gmres',
           'ksp_converged_reason':None,
+          'ksp_monitor_true_residual':None,
           'mat_type':'aij',
+          'ksp_rtol':1.0e-32,
+          'ksp_atol':1.0e-6,
           'pc_type':'lu',
           'pc_factor_mat_solver_type':'mumps'}
 HSolver = LinearVariationalSolver(HProblem, solver_parameters=params)
 
-for k in range(10,100,10):
-    print(k)
+for k0 in (1,10,100,100,1000,10000,100000):
+    k.assign(k0)
+    ee.assign(1.0)
     U.assign(0.)
     HSolver.solve()
