@@ -59,7 +59,7 @@ def Rotation(PCBase):
             'pc_fieldsplit_1_sub_pc_type':'ilu',
             'pc_fieldsplit_2_ksp_type':'cg',
             'pc_fieldsplit_2_pc
-_type':'bjacobi',
+            _type':'bjacobi',
             'pc_fieldsplit_2_sub_pc_type':'ilu',
             'pc_fieldsplit_3_ksp_type':'cg',
             'pc_fieldsplit_3_pc_type':'bjacobi',

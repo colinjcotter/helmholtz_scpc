@@ -7,9 +7,9 @@ lrmax = 0.
 limax = 0.
 
 for s in arange(1000):
-    P = matrix([[1+ee,0],[1,1]])
-    S = matrix([[1j*s,0],[0,1j*s]])
-    N = matrix([[ee,-1],[1,ee]])
+    P = matrix([[1+ee,0],[0,1+ee]])
+    S = matrix([[1j*s,-1],[0,1j*s]])
+    N = matrix([[ee,0],[1,ee]])
 
     C = (P-N)*inv(P+N)*(P+S)*inv(P-S)
 
