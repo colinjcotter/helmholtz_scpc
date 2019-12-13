@@ -94,15 +94,20 @@ lu_params = {'ksp_type':'gmres',
              'pc_type':'lu',
              'pc_factor_mat_solver_type':'mumps'}
 
-hybrid_params = {'ksp_type':'gmres',
-                 'ksp_converged_reason':None,
-                 'mat_type':'aij',
-                 'ksp_rtol':1.0e-32,
-                 'ksp_atol':1.0e-6,
-                 'pc_type':'python',
-                 'pc_factor_mat_solver_type':'mumps'}
+condensed_params = {'ksp_type':'preonly',
+                    'pc_type':'lu',
+                    'pc_factor_mat_solver_type':'mumps'}
 
-HSolver = LinearVariationalSolver(HProblem, solver_parameters=lu_params)
+hybrid_params = {'mat_type': 'matfree',
+                 'pmat_type': 'matfree',
+                 'ksp_type':'gmres',
+                 'ksp_converged_reason':None,
+                 'pc_type': 'python',
+                 'pc_python_type':  'firedrake.SCPC',
+                 'pc_sc_eliminate_fields': '0, 1',
+                 'condensed_field':condensed_params}
+
+HSolver = LinearVariationalSolver(HProblem, solver_parameters=hybrid_params)
 
 file0 = File('hh.pvd')
 
@@ -121,4 +126,4 @@ for e0 in (1.0, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001):
     ui = u_out.sub(0)
     pr = p_out.sub(0)
     pi = p_out.sub(0)
-    file0.write(u_out, p_out)
+    file0.write(ur, ui, pr, pi)
