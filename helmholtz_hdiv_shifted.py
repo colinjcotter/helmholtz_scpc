@@ -2,7 +2,7 @@ from firedrake import *
 #A basic real-mode Helmholtz discretisation
 #using a shifted preconditioner with LU
 
-n = 50
+n = 150
 mesh = UnitSquareMesh(n,n)
 
 k = Constant(10)
@@ -16,18 +16,20 @@ W = MixedFunctionSpace((V,Q,V,Q))
 ur, pr, ui, pi = TrialFunctions(W)
 vr, qr, vi, qi = TestFunctions(W)
 
+T = Constant(50.0/n)
+
 a = (
-    ee*inner(vr,ur) - k*inner(vr, ui) - inner(div(vr), pr)
-    + inner(qr, div(ur)) - k*qr*pi + ee*qr*pr
-    + ee*inner(vi,ui) + k*inner(vi, ur) - inner(div(vi), pi)
-    + inner(qi, div(ui)) + k*qi*pr + ee*qi*pi
+    ee*inner(vr,ur) - k*inner(vr, ui) - T*inner(div(vr), pr)
+    + T*inner(qr, div(ur)) - k*qr*pi + ee*qr*pr
+    + ee*inner(vi,ui) + k*inner(vi, ur) - T*inner(div(vi), pi)
+    + T*inner(qi, div(ui)) + k*qi*pr + ee*qi*pi
     )*dx
 
 aP = (
-    ee0*inner(vr,ur) - k*inner(vr, ui) - inner(div(vr), pr)
-    + inner(qr, div(ur)) - k*qr*pi + ee0*qr*pr
-    + ee0*inner(vi,ui) + k*inner(vi, ur) - inner(div(vi), pi)
-    + inner(qi, div(ui)) + k*qi*pr + ee0*qi*pi
+    ee0*inner(vr,ur) - k*inner(vr, ui) - T*inner(div(vr), pr)
+    + T*inner(qr, div(ur)) - k*qr*pi + ee0*qr*pr
+    + ee0*inner(vi,ui) + k*inner(vi, ur) - T*inner(div(vi), pi)
+    + T*inner(qi, div(ui)) + k*qi*pr + ee0*qi*pi
     )*dx
 
 x, y = SpatialCoordinate(mesh)
