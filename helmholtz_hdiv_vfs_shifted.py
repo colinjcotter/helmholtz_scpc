@@ -2,7 +2,7 @@ from firedrake import *
 #A basic real-mode Helmholtz discretisation
 #using a shifted preconditioner with LU
 
-n = 50
+n = 100
 mesh = UnitSquareMesh(n,n)
 
 k = Constant(1.0)
@@ -96,8 +96,12 @@ lu_params = {'ksp_type':'gmres',
              'pc_factor_mat_solver_type':'mumps'}
 
 condensed_params = {'ksp_type':'preonly',
-                    'pc_type':'lu',
-                    'pc_factor_mat_solver_type':'mumps'}
+                    'pc_type': 'gamg',
+                    'pc_gamg_sym_graph': None,
+                    'mg_levels': {'ksp_type': 'gmres',
+                                  'ksp_max_it': 5,
+                                  'pc_type': 'bjacobi',
+                                  'sub_pc_type': 'ilu'}}
 
 hybrid_params = {'mat_type': 'matfree',
                  'pmat_type': 'matfree',
