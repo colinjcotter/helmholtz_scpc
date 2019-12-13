@@ -1,6 +1,6 @@
 from firedrake import *
 #A basic real-mode Helmholtz discretisation
-#using a shifted preconditioner with LU
+#using hybridisation with LU
 
 n = 50
 mesh = UnitSquareMesh(n,n)
@@ -58,23 +58,6 @@ a = (
     + r0*jump(ui,n)*muiS*dS + r0*inner(ui,n)*mui*ds
     )
 
-aP = (
-    #ur equation
-    (ee0*inner(vr,ur) - k*inner(vr, ui) - r0*inner(div(vr), pr))*dx
-    + r0*jump(vr,n)*llrS*dS + r0*inner(vr,n)*llr*ds
-    #pr equation
-    + (r0*inner(qr, div(ur)) - k*qr*pi + ee0*qr*pr)*dx
-    #mur equation
-    + r0*jump(ur,n)*murS*dS + r0*inner(ur,n)*mur*ds
-    #ui equation
-    + (ee0*inner(vi,ui) + k*inner(vi, ur) - r0*inner(div(vi), pi))*dx
-    + r0*jump(vi,n)*lliS*dS + r0*inner(vi,n)*lli*ds
-    #pi equation
-    + (r0*inner(qi, div(ui)) + k*qi*pr + ee0*qi*pi)*dx
-    #mui equation
-    + r0*jump(ui,n)*muiS*dS + r0*inner(ui,n)*mui*ds
-    )
-
 x, y = SpatialCoordinate(mesh)
 
 f = exp(-((x-0.5)**2 + (y-0.5)**2)/0.25**2)
@@ -83,17 +66,8 @@ L = qi*f/k*dx
 
 U = Function(W)
 
-aP = None
-HProblem = LinearVariationalProblem(a, L, U, aP=aP,
+HProblem = LinearVariationalProblem(a, L, U,
                                     constant_jacobian=False)
-
-lu_params = {'ksp_type':'gmres',
-             'ksp_converged_reason':None,
-             'mat_type':'aij',
-             'ksp_rtol':1.0e-32,
-             'ksp_atol':1.0e-6,
-             'pc_type':'lu',
-             'pc_factor_mat_solver_type':'mumps'}
 
 condensed_params = {'ksp_type':'preonly',
                     'pc_type':'lu',
