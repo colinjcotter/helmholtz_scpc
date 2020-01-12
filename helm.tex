@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage[nosumlimits]{amsmath}
+\usepackage{amssymb,amsthm,MnSymbol}
+\def\MM#1{\boldsymbol{#1}}
+\newcommand{\pp}[2]{\frac{\partial #1}{\partial #2}} 
+\newcommand{\dede}[2]{\frac{\delta #1}{\delta #2}}
+\newcommand{\dd}[2]{\frac{\diff#1}{\diff#2}}
+\newcommand{\dt}[1]{\diff\!#1}
+\def\MM#1{\boldsymbol{#1}}
+\DeclareMathOperator{\diff}{d}
+\DeclareMathOperator{\DIV}{div}
+\DeclareMathOperator{\D}{D}
+\usepackage{amscd}
+\usepackage{natbib}
+\bibliographystyle{elsarticle-harv}
+\usepackage{helvet}
+\usepackage{amsfonts}
+\renewcommand{\familydefault}{\sfdefault} %% Only if the base font of the docume
+\newcommand{\vecx}[1]{\MM{#1}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\code}[1]{{\ttfamily #1}} 
+\usepackage[margin=2cm]{geometry}
+\newcommand{\jump}[1]{\left[\!\!\left[ #1 \right]\!\!\right]}
+
+\usepackage{fancybox}
+\begin{document}
+\title{Notes on well-posedness for the mixed shifted Helmholtz
+  operator}
+\author{All of Us}
+\maketitle
+
+We consider the mixed shifted Helmholtz operator,
+\begin{equation}
+  \left((\epsilon + ik)I + L\right)
+  \begin{pmatrix}
+    u\\
+    h\\
+  \end{pmatrix},
+  \quad
+  L = \begin{pmatrix}
+    0 & \nabla \\
+    \nabla\cdot & 0 \\
+    \end{pmatrix}.
+\end{equation}
+Here $L$ is an antisymmetric operator so the mixed Helmholtz operator
+has a kernel when $\epsilon=0$ and $ik$ is an eigenvalue of $L$.
+
+This operator has bilinear form on $H(\DIV)\times L^2$ given by
+\begin{equation}
+  B(u,h; v,\phi) = (\epsilon + ik)\langle v, u \rangle
+  - \langle \diff v, p \rangle +
+  (\epsilon + ik)\langle \phi, h \rangle + \langle \phi, \diff u \rangle, 
+\end{equation}
+where we use the convention that the first argument in bilinear forms
+is complex-conjugated.
+
+The system is well-posed provided that
+\begin{equation}
+  \inf_{(
+\end{equation}
+
+\end{document}

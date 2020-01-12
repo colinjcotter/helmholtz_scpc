@@ -83,9 +83,7 @@ L = qi*f/k*dx
 
 U = Function(W)
 
-aP = None
-HProblem = LinearVariationalProblem(a, L, U, aP=aP,
-                                    constant_jacobian=False)
+HProblem = LinearVariationalProblem(a, L, U, aP=aP, constant_jacobian=False)
 
 lu_params = {'ksp_type':'gmres',
              'ksp_converged_reason':None,
@@ -103,6 +101,10 @@ condensed_params = {'ksp_type':'preonly',
                                   'pc_type': 'bjacobi',
                                   'sub_pc_type': 'ilu'}}
 
+condensed_lu_params = {'ksp_type':'preonly',
+                       'pc_type': 'lu',
+                       'pc_factor_mat_solver_type':'mumps'}
+
 hybrid_params = {'mat_type': 'matfree',
                  'pmat_type': 'matfree',
                  'ksp_type':'gmres',
@@ -110,7 +112,7 @@ hybrid_params = {'mat_type': 'matfree',
                  'pc_type': 'python',
                  'pc_python_type':  'firedrake.SCPC',
                  'pc_sc_eliminate_fields': '0, 1',
-                 'condensed_field':condensed_params}
+                 'condensed_field':condensed_lu_params}
 
 HSolver = LinearVariationalSolver(HProblem, solver_parameters=hybrid_params)
 
