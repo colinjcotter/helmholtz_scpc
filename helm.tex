@@ -47,18 +47,150 @@ We consider the mixed shifted Helmholtz operator,
 Here $L$ is an antisymmetric operator so the mixed Helmholtz operator
 has a kernel when $\epsilon=0$ and $ik$ is an eigenvalue of $L$.
 
-This operator has bilinear form on $H(\DIV)\times L^2$ given by
+This operator has bilinear form on $X=H(\DIV)\times L^2$ given by
 \begin{equation}
-  B(u,h; v,\phi) = (\epsilon + ik)\langle v, u \rangle
-  - \langle \diff v, p \rangle +
-  (\epsilon + ik)\langle \phi, h \rangle + \langle \phi, \diff u \rangle, 
+  B((u,h), (v,\phi)) = (\epsilon + ik)\langle v, u \rangle
+  - \langle \nabla\cdot v, h \rangle +
+  (\epsilon + ik)\langle \phi, h \rangle + \langle \phi, \nabla\cdot u \rangle, 
 \end{equation}
 where we use the convention that the first argument in bilinear forms
-is complex-conjugated.
-
-The system is well-posed provided that
+is complex-conjugated. We equip $X$ with the norm
 \begin{equation}
-  \inf_{(
+\|(u,h)\|^2_X = \|u\|_{H(\DIV)}^2 + \|h\|^2_{L^2}.
 \end{equation}
+
+The system is well-posed provided that there exists $\gamma_1,\gamma_2>0$ such
+that
+\begin{align}
+  \inf_{(u,h)\neq 0}\sup_{(v,\phi)\neq 0}
+  \frac{|B((u,h), (v,\phi))|}{\|(u,h)\|_X\|(v,\phi)\|_X} &> \gamma_1, \\
+  \inf_{(u,h)\neq 0}\sup_{(v,\phi)\neq 0}
+  \frac{|B((v,\phi), (u,h))|}{\|(u,h)\|_X\|(v,\phi)\|_X} &> \gamma_2.
+\end{align}
+The former (with something similar for the latter) is equivalent to:
+there exists $\gamma_1>0$ such that for all $(u,h)$, there exists
+$(v,\phi)$ such that
+\begin{equation}
+  |B((u,h), (v,\phi))| \leq \gamma_1\|(u,h)\|_X\|(v,\phi)\|_X.
+\end{equation}
+To show this, we will choose $w \in \zeta^*$,
+where
+\begin{equation}
+  \zeta^* = \left\{u \in H(\DIV), \, \langle u, v\rangle = 0 \, \forall
+    v \in H(\DIV) \mbox{ with } \nabla\cdot v=0\right\},
+\end{equation}
+such that $\nabla\dot w = h$. We have the
+Poincar\'e inequality
+\begin{equation}
+  \|w\|_{H(\DIV)} \leq c_p\|\nabla\cdot w\|_{L^2}
+  = c_p\|h\|_{L^2}.
+\end{equation}
+Then, given $(u,h)\in X$, we choose
+\begin{equation}
+v = a^*u + b^*w, \quad \phi = c^*h + d^*\nabla\cdot u,
+\end{equation}
+for some constants
+$a,b\in \mathbb{C}$ that we will determine later.
+
+Then,
+\begin{align}
+    B((u,h), (v,\phi)) =& (\epsilon + ik)\langle v, u \rangle
+  - \langle \nabla\cdot v, h \rangle +
+  (\epsilon + ik)\langle \phi, h \rangle + \langle \phi, \nabla\cdot u \rangle,   \\\nonumber
+  =& (\epsilon + ik)\langle a^*u + b^*w, u \rangle
+  - \langle a^*\nabla\cdot u + b^*h, h \rangle \\
+  & \qquad +  (\epsilon + ik)\left
+  \langle c^*h + d^*\nabla\cdot u, h \right\rangle
+  + \left\langle c^*h + d^*
+  \nabla\cdot u, \nabla\cdot u \right\rangle,   
+  \\ \nonumber
+ =& (\epsilon + ik)a\|u\|^2 + (\epsilon + ik)b
+  \langle w, u \rangle
+  - a\langle \nabla\cdot u, h \rangle - b \|h\|^2 \\
+  & \quad + (\epsilon + ik)c\|h\|^2 
+  + (\epsilon + ik)c\langle \nabla\cdot u, h\rangle
+  + d\langle h, \nabla\cdot u\rangle
+  + d\|\nabla \cdot u\|^2, \\
+  =& (\epsilon + ik)a\|u\|^2
+  + d\|\nabla \cdot u\|^2
+  + \left((\epsilon + ik)c-b\right)\|h\|^2 
+  + (\epsilon + ik)b
+  \langle w, u \rangle \nonumber \\
+  & \qquad   + ((\epsilon+ik)c-a)\langle \nabla\cdot u, h\rangle
+    + d\langle h, \nabla\cdot u\rangle.
+\end{align}
+Hence,
+\begin{align}
+  \nonumber
+  |B((u,h), (v,\phi))| \geq &
+   \left|(\epsilon + ik)a\|u\|^2
+  + d\|\nabla \cdot u\|^2
+  + \left((\epsilon + ik)c-b\right)\|h\|^2 \right|
+  - |(\epsilon + ik)b|
+  \|w\|\|u\| \\
+  & \qquad   - \left(|(\epsilon+ik)c-a|+|d|\right)\|\nabla\cdot u\|\|h\|, \\
+  \nonumber\geq &
+   \left|(\epsilon + ik)a\|u\|^2
+  + d\|\nabla \cdot u\|^2
+  + \left((\epsilon + ik)c-b\right)\|h\|^2 \right|
+  - \frac{1}{c_p}|(\epsilon + ik)b|
+  \|h\|\|u\| \\
+  & \qquad   - \left(|(\epsilon+ik)c-a|+|d|\right)\|\nabla\cdot u\|\|h\|, \\
+  \nonumber\geq &
+   \left|(\epsilon + ik)a\|u\|^2
+  + d\|\nabla \cdot u\|^2
+  + \left((\epsilon + ik)c-b\right)\|h\|^2 \right|
+  - \frac{1}{2c_p}|(\epsilon + ik)b|
+  \left(\|h\|^2+\|u\|^2\right) \\
+  & \qquad   - \frac{1}{2}\left(|(\epsilon+ik)c-a|+|d|\right)
+  \left(\|\nabla\cdot u\|^2 + \|h\|^2\right).
+\end{align}
+Assuming (we will ensure this later) that
+\begin{equation}
+  \Re\left((\epsilon + ik)a\right)> 0, \,
+  \Re\left(d\right) > 0, \,
+  \Re\left((\epsilon +ik)c - b\right) > 0,
+\end{equation}
+then
+\begin{align}
+  \nonumber
+  |B((u,h), (v,\phi))| &\geq 
+   \Re\left((\epsilon + ik)a\|u\|^2
+  + d\|\nabla \cdot u\|^2
+  + \left((\epsilon + ik)c-b\right)\|h\|^2 \right) \\
+  & \nonumber \qquad - \frac{1}{2c_p}|(\epsilon + ik)b|
+  \left(\|h\|^2+\|u\|^2\right) \\
+  & \qquad   - \frac{1}{2}\left(|(\epsilon+ik)c-a|-|d|\right)
+  \left(\|\nabla\cdot u\|^2 + \|h\|^2\right), \\
+  & = \nonumber
+     \Re\left((\epsilon + ik)a\right)\|u\|^2
+     + \Re(d)\|\nabla \cdot u\|^2
+  + \Re\left(\left((\epsilon + ik)c-b\right)\right)\|h\|^2 \\
+  & \qquad - \frac{1}{2c_p}|(\epsilon + ik)b|
+  \nonumber
+  \left(\|h\|^2+\|u\|^2\right) \\
+  & \qquad   - \frac{1}{2}\left(|(\epsilon+ik)c-a|+|d|\right)
+  \left(\|\nabla\cdot u\|^2 + \|h\|^2\right), \\
+  & = \nonumber 
+  \left(\Re\left((\epsilon + ik)a\right)
+  - \frac{1}{2c_p}|(\epsilon + ik)b|\right)\|u\|^2
+  + \left(\Re(d)
+  - \frac{1}{2}\left(|(\epsilon+ik)c-a|+|d|\right)\right)\|\nabla\cdot u\|^2\\
+  & \qquad 
+  + \left(\Re\left(\left((\epsilon + ik)c-b\right)\right)
+  - \frac{1}{2c_p}|(\epsilon + ik)b|
+  - \frac{1}{2}\left(|(\epsilon+ik)c-a|+|d|\right)\right)\|h\|^2.
+\end{align}
+Hence, we need to find $a,b \in \mathbb{C}$ such that
+\begin{align}
+  \Re\left((\epsilon + ik)a\right)
+  &\geq \gamma_0 + |(\epsilon + ik)b|\frac{1}{2c_p}, \\
+  + \Re\left(d\right)
+  &\geq \gamma_0 + \frac{|(\epsilon + ik)c-a|+|d|}{2}, \\
+  \Re\left((\epsilon + ik)c-b\right)
+  &\geq \gamma_0 +  |(\epsilon + ik)b|\frac{1}{2c_p}
+  + \frac{|(\epsilon + ik)c-a|+|d|}{2},
+\end{align}
+for some $\gamma_0>0$.
 
 \end{document}
