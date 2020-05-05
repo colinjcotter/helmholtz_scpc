@@ -121,7 +121,9 @@ file0 = File('hh.pvd')
 u_out = Function(V)
 p_out = Function(Q)
 
-for e0 in (1.0, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001):
+e0s = (1.0, 0.5, 0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001)
+
+for e0 in e0s:
     ee.assign(e0)
     r0.assign(1.0)
     U.assign(0.)
