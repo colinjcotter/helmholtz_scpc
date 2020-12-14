@@ -5,9 +5,9 @@ from firedrake import *
 n = 50
 mesh = UnitSquareMesh(n,n)
 
-k = Constant(1.0)
+k = Constant(2.33434564547)
 ee = Constant(1.0)
-gamma = Constant(1.0e2)
+gamma = Constant(1.0e4)
 
 deg = 1
 V = VectorFunctionSpace(mesh, "BDM", deg)
@@ -28,12 +28,12 @@ qi = q[1]
 
 a = (
     #ur equation
-    (ee*inner(vr,ur) - k*inner(vr, ui) - inner(div(vr), pr))*dx
+    (ee*inner(vr,ur) - k*inner(vr, ui) + inner(div(vr), pr))*dx
     + gamma*(inner(div(vr), div(ur)) - k*div(vr)*pi + ee*div(vr)*pr)*dx
     #pr equation
     + (inner(qr, div(ur)) - k*qr*pi + ee*qr*pr)*dx
     #ui equation
-    + (ee*inner(vi,ui) + k*inner(vi, ur) - inner(div(vi), pi))*dx
+    + (ee*inner(vi,ui) + k*inner(vi, ur) + inner(div(vi), pi))*dx
     + gamma*(inner(div(vi), div(ui)) + k*div(vi)*pr + ee*div(vi)*pi)*dx
     #pi equation
     + (inner(qi, div(ui)) + k*qi*pr + ee*qi*pi)*dx
@@ -96,7 +96,7 @@ topleft_MG = {
     "mg_levels_patch_pc_patch_save_operators": True,
     "mg_levels_patch_pc_patch_partition_of_unity": False,
     "mg_levels_patch_pc_patch_sub_mat_type": "seqaij",
-    "mg_levels_patch_pc_patch_construct_type": "star",
+    "mg_levels_patch_pc_patch_construct_type": "vanka",
     "mg_levels_patch_pc_patch_multiplicative": False,
     "mg_levels_patch_pc_patch_symmetrise_sweep": False,
     "mg_levels_patch_pc_patch_construct_dim": 0,
