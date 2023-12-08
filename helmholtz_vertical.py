@@ -71,43 +71,54 @@ U = Function(W)
 HProblem = LinearVariationalProblem(a, L, U,
                                     constant_jacobian=False)
 
-condensed_params = {'ksp_type':'preonly',
-                    'pc_type':'lu',
-                    'pc_factor_mat_solver_type':'mumps'}
+condensed_params_mumps = {'ksp_type':'preonly',
+                          'pc_type':'lu',
+                          'pc_factor_mat_solver_type':'mumps'}
 
-hybrid_params = {
-'mat_type':'matfree',
-'ksp_type':'preonly',
-'ksp_converged_reason': None,
-'pc_type':'python',
-'pc_python_type':'firedrake.SCPC',
-'pc_sc_eliminate_fields':'0,1',
-'condensed_field':condensed_params}
-
-condensed_gt_params = {'ksp_type':'fgmres',
+condensed_params_gt = {'ksp_type': 'fgmres',
+                       'ksp_max_it': 100,
+                       'mat_type': 'matfree',
                        'ksp_monitor': None,
-                       'pc_type':'python',
-                       'pc_python_type':'firedrake.GTMGPC',
-                       'gt': {'mat_type':'aij',
-                              'mg_levels':{'ksp_type':'gmres',
-                                           'ksp_max_it': 3,
-                                           'pc_type':'bjacobi',
-                                           'sub_pc_type':'SHOULD BE ASM'} ,
-                              'mg_coarse': mg_param }}}
-appctx = {’ get_coarse_operator ’ : p1_callback ,
-# 22 ’ get_coarse_space ’ : get_p1_space ,
-# 23 ’ interpolation_matrix ’: interpolation_matrix }
-# mg_param = {’ksp_type ’: ’preonly ’,
-# 3 ’pc_type ’: ’gamg ’,
-# 4 ’ksp_rtol ’: 1E -8 ,
-# 5 ’ pc_mg_cycles ’: ’v’,
-# 6 ’mg_levels ’: {’ksp_type ’: ’chebyshev ’,
-# 7 ’ksp_max_it ’: 2 ,
-# 8 ’pc_type ’: ’bjacobi ’,
-# 9 ’sub_pc_type ’: ’sor ’} ,
-# 10 ’mg_coarse ’: {’ksp_type ’:’chebyshev ’,
-# 11 ’ksp_max_it ’:2 ,
-# 12 ’pc_type ’:’sor ’}}
+                       'ksp_converged_reason': None,
+                       'ksp_rtol': 1e-8,
+                       'ksp_atol': 1e-30,
+                       'pc_type': 'python',
+                       'pc_python_type': 'firedrake.GTMGPC',
+                       'gt': {'mg_levels': {'ksp_type': 'gmres',
+                                            'pc_type': 'bjacobi',
+                                            'sub_pc_type:': 'python',
+                                            'sub_pc_python_type': 'firedrake.ASMStarPC',
+                                            'sub_pc_star_contruct_codim': 0,
+                                            'ksp_monitor': None,
+                                            #'ksp_converged_reason': None,
+                                            #'ksp_max_it': 3
+                       },
+                              'mg_coarse': {'ksp_type': 'preonly',
+                                            'pc_type': 'bjacobi',
+                                            'sub_pc_type:': 'lu',
+                                            'sub_pc_factor_mat_solver_type':'mumps'}
+                              }}}
+                                       
+hybrid_params = {'mat_type': 'matfree',
+                 'pmat_type': 'matfree',
+                 'ksp_type':'gmres',
+                 'ksp_converged_reason':None,
+                 'pc_type': 'python',
+                 'pc_python_type':  'firedrake.SCPC',
+                 'pc_sc_eliminate_fields': '0, 1',
+                 'condensed_field':condensed_params_gt}
+
+appctx = {'get_coarse_operator': p1_callback,
+          'get_coarse_space': get_p1_space}
+
+def get_p1_space():
+    return VectorFunctionSpace(mesh, "CG", 1, vfamily="R", vdegree=0)
+
+def p1_callback():
+    P1 = get_p1_space()
+    p = TrialFunction(P1)
+    q = TestFunction(P1)
+    return inner(grad(p), grad(q))*dx
 
 HSolver = LinearVariationalSolver(HProblem, solver_parameters=hybrid_params)
 

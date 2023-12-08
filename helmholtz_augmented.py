@@ -3,11 +3,11 @@ from firedrake import *
 #using augmented Lagrangian formulation
 
 n = 50
-mesh = UnitSquareMesh(n,n)
+mesh = PeriodicUnitSquareMesh(n,n)
 
-k = Constant(1.0)
-ee = Constant(1.0)
-gamma = Constant(10.0)
+k = Constant(5.)
+ee = Constant(0.0)
+gamma = Constant(100.0)
 
 deg = 1
 V = VectorFunctionSpace(mesh, "BDM", deg)
@@ -26,22 +26,26 @@ vi = v[1,:]
 qr = q[0]
 qi = q[1]
 
+# -i*((ee+ik)*<v,u> - <div(v), p> +
+#      ik*gamma*((ee+ik)*<div(v),p> + <div(u),div(v)>))
+# + (ee+ik)*<q,p> + <q,div(u)>
+
 a = (
     #ur equation
     (ee*inner(vr,ur) - k*inner(vr, ui) - inner(div(vr), pr))*dx
-    + gamma*(inner(div(vr), div(ur)) - k*div(vr)*pi + ee*div(vr)*pr)*dx
-    #pr equation
+    #pr equation (and associated contribution to ui equation)
     + (inner(qr, div(ur)) - k*qr*pi + ee*qr*pr)*dx
+    + gamma*k*(inner(div(vi), div(ur)) - k*div(vi)*pi + ee*div(vi)*pr)*dx
     #ui equation
     + (ee*inner(vi,ui) + k*inner(vi, ur) - inner(div(vi), pi))*dx
-    + gamma*(inner(div(vi), div(ui)) + k*div(vi)*pr + ee*div(vi)*pi)*dx
-    #pi equation
+    #pi equation (and associated contribution to ur equation)
     + (inner(qi, div(ui)) + k*qi*pr + ee*qi*pi)*dx
+    - gamma*k*(inner(div(vr), div(ui)) + k*div(vr)*pr + ee*div(vr)*pi)*dx
     )
 
 x, y = SpatialCoordinate(mesh)
 
-f = exp(-((x-0.5)**2 + (y-0.5)**2)/0.25**2)
+f = exp(-((x-0.5)**2 + (y-0.5)**2)/0.1**2)
 
 L = qi*f/k*dx
 
@@ -64,7 +68,8 @@ sparameters = {
 
 bottomright = {
     "ksp_type": "gmres",
-    "ksp_max_it": 3,
+    "ksp_max_it": 10,
+    "ksp_monitor": None,
     "pc_type": "python",
     "pc_python_type": "firedrake.MassInvPC",
     "Mp_pc_type": "bjacobi",
@@ -104,9 +109,9 @@ topleft_MG = {
     "mg_levels_patch_sub_pc_type": "lu",
 }
 
-ctx = {"mu": -1.0/gamma}
+ctx = {"mu": -1.0/gamma/k}
 
-sparameters["fieldsplit_0"] = topleft_MG
+sparameters["fieldsplit_0"] = topleft_LU
 
 HSolver = LinearVariationalSolver(HProblem, solver_parameters=sparameters,
                                   appctx=ctx)
@@ -115,8 +120,8 @@ file0 = File('hh.pvd')
 
 HSolver.solve()
 u, p = U.split()
-ur = u_out.sub(0)
-ui = u_out.sub(0)
-pr = p_out.sub(0)
-pi = p_out.sub(0)
+ur = u.sub(0)
+ui = u.sub(1)
+pr = p.sub(0)
+pi = p.sub(1)
 file0.write(ur, ui, pr, pi)
